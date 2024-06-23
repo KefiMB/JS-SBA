@@ -1,28 +1,44 @@
-  
-  function getLearnerData(CourseInfo, AssignmentGroup, [LearnerSubmissions]) {
-    // here, we would process this data to achieve the desired result.
-    let CourseInfo = id;
-    const AssignmentGroup = "Fundamentals of Javascript"
-    AssignmentGroup = ["Fundamentals of JavaScript", "Declare a Variable", "Write a Function", "Code the World" ]
-    const result = [
-      {
-        id: 125,
-        avg: 0.985, // (47 + 150) / (50 + 150)
-        1: 0.94, // 47 / 50
-        2: 1.0 // 150 / 150
-      },
-      {
-        id: 132,
-        avg: 0.82, // (39 + 125) / (50 + 150)
-        1: 0.78, // 39 / 50
-        2: 0.833 // late: (140 - 15) / 150
+function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
+  // Validate input data
+  validateData(courseInfo, assignmentGroup, learnerSubmissions);
+
+  const transformedData = [];
+
+  learnerSubmissions.forEach(learner => {
+    const assignmentScores = {};
+    let totalScore = 0;
+    let totalPossible = 0;
+
+    learner.submissions.forEach(submission => {
+      const { assignment_id, points_possible, score, submitted_at, due_at } = submission;
+      const assignment = assignmentGroup.assignments.find(a => a.id === assignment_id);
+      if (!assignment) {
+        // Assignment not found in the AssignmentGroup, skip it
+        return;
       }
-    ];
-  
-    return result;
-  }
-  
-  const result = getLearnerData(CourseInfo, AssignmentGroup, LearnerSubmissions);
-  
-  console.log(result);
-  
+
+      const dueDate = new Date(due_at);
+      const submittedDate = new Date(submitted_at);
+      const currentDate = new Date();
+
+      // Skip assignments that are not yet due
+      if (dueDate > currentDate) {
+        return;
+      }
+
+      let adjustedScore = score;
+      if (submittedDate > dueDate) {
+        adjustedScore = Math.max(score - points_possible * 0.1, 0);
+      }
+
+      assignmentScores[assignment_id] = adjustedScore / points_possible;
+      totalScore += adjustedScore;
+      totalPossible += points_possible;
+    });
+
+    const avg = totalPossible > 0 ? (totalScore / totalPossible) : 0;
+
+    transformedData.push({
+      id: learner.learner_id,
+      avg, return transformedData;
+    }
