@@ -41,6 +41,14 @@ function getLearnerData(courseInfo, assignmentGroup, learnerSubmissions) {
       totalPossible += points_possible;
     });
 
+    const avg = totalPossible > 0 ? (totalScore / totalPossible) : 0;
+
+    transformedData.push({
+      id: learner.learner_id,
+      avg, return newData
+    });
+
+
     for (let learnerId in learnerMap) {
       const learnerData = learnerMap[learnerId];
       const avg = learnerData.totalPossible > 0 ? learnerData.totalScore / learnerData.totalPossible : 0;
